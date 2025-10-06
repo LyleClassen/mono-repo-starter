@@ -86,3 +86,16 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Build output directories
+dist/
+build/
+out/
+.vercel/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Turbo
+.turbo/
+
