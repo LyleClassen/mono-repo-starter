@@ -24,6 +24,7 @@ await fastify.register(swagger, {
     ],
     tags: [
       { name: 'health', description: 'Health check endpoints' },
+      { name: 'people', description: 'People CRUD operations' },
     ],
   },
 });

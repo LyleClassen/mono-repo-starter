@@ -17,7 +17,8 @@
     "db:init:prod": "node dist/init.js"
   },
   "dependencies": {
-    "drizzle-orm": "^0.38.3",
+    "@sinclair/typebox": "^0.34.41",
+    "drizzle-orm": "^0.44.6",
     "postgres": "^3.4.5",
     "tsx": "^4.20.1"
   },
