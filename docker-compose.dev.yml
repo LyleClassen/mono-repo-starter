@@ -15,3 +15,21 @@ services:
       - .env.dev
     stdin_open: true
     tty: true
+
+  backend-api:
+    build:
+      context: .
+      dockerfile: apps/backend-api/Dockerfile.dev
+    ports:
+      - "${BACKEND_API_PORT:-3001}:3001"
+    volumes:
+      - ./apps/backend-api:/app/apps/backend-api
+      - /app/apps/backend-api/node_modules
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    env_file:
+      - .env.dev
+    stdin_open: true
+    tty: true
