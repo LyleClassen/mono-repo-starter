@@ -1,0 +1,66 @@
+FROM node:22-alpine AS base
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@10.18.0 --activate
+
+# Stage 1: Dependencies
+FROM base AS deps
+WORKDIR /app
+
+# Copy workspace config
+COPY pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml* ./
+
+# Copy app package.json
+COPY apps/web-client/package.json ./apps/web-client/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --prod=false
+
+# Stage 2: Builder
+FROM base AS builder
+WORKDIR /app
+
+# Copy dependencies
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web-client/node_modules ./apps/web-client/node_modules
+
+# Copy workspace config
+COPY pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml* ./
+
+# Copy app source
+COPY apps/web-client ./apps/web-client
+
+WORKDIR /app/apps/web-client
+
+# Build the app
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN pnpm build
+
+# Stage 3: Runner
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy built files with correct permissions
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web-client/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web-client/.next/static ./apps/web-client/.next/static
+
+# Copy public files to the correct location for standalone mode
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web-client/public ./apps/web-client/public
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "apps/web-client/server.js"]

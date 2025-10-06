@@ -1,0 +1,12 @@
+services:
+  web-client:
+    build:
+      context: .
+      dockerfile: apps/web-client/Dockerfile.prod
+    ports:
+      - "${WEB_CLIENT_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.prod
+    restart: unless-stopped
