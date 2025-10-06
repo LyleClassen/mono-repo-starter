@@ -11,6 +11,7 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
 COPY apps/backend-api/package.json ./apps/backend-api/
+COPY packages/database/package.json ./packages/database/
 
 # Install all dependencies (including devDependencies for build)
 RUN pnpm install --frozen-lockfile
@@ -23,9 +24,14 @@ WORKDIR /app
 # Copy dependencies from previous stage
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=dependencies /app/apps/backend-api/node_modules ./apps/backend-api/node_modules
+COPY --from=dependencies /app/packages/database/node_modules ./packages/database/node_modules
 
 # Copy source code
 COPY apps/backend-api ./apps/backend-api
+COPY packages/database ./packages/database
+
+# Build database package
+RUN pnpm --filter @repo/database build
 
 # Build TypeScript
 RUN pnpm --filter @mono-repo-starter/backend-api build
@@ -41,6 +47,7 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
 COPY apps/backend-api/package.json ./apps/backend-api/
+COPY packages/database/package.json ./packages/database/
 
 # Install only production dependencies
 RUN pnpm install --frozen-lockfile --prod
@@ -53,11 +60,16 @@ WORKDIR /app
 # Copy production dependencies
 COPY --from=prod-dependencies /app/node_modules ./node_modules
 COPY --from=prod-dependencies /app/apps/backend-api/node_modules ./apps/backend-api/node_modules
+COPY --from=prod-dependencies /app/packages/database/node_modules ./packages/database/node_modules
 
 # Copy built application
 COPY --from=build /app/apps/backend-api/dist ./apps/backend-api/dist
 COPY --from=build /app/apps/backend-api/openapi ./apps/backend-api/openapi
 COPY apps/backend-api/package.json ./apps/backend-api/
+
+# Copy database package for migrations
+COPY --from=build /app/packages/database ./packages/database
+COPY packages/database/package.json ./packages/database/
 
 # Set environment
 ENV NODE_ENV=production
@@ -66,8 +78,11 @@ ENV PORT=3001
 # Expose port
 EXPOSE 3001
 
+# Create entrypoint script
+COPY apps/backend-api/docker-entrypoint.prod.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 # Use non-root user
 USER node
 
-# Start production server
-CMD ["node", "apps/backend-api/dist/index.js"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

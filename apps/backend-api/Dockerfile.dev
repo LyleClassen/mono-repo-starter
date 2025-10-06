@@ -8,12 +8,19 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
 COPY apps/backend-api/package.json ./apps/backend-api/
+COPY packages/database/package.json ./packages/database/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
+# Copy database package files
+COPY packages/database ./packages/database
+
 # Expose port
 EXPOSE 3001
 
-# Start development server with hot reload
-CMD ["pnpm", "--filter", "@mono-repo-starter/backend-api", "dev"]
+# Create entrypoint script
+COPY apps/backend-api/docker-entrypoint.dev.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
