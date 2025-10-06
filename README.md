@@ -35,6 +35,7 @@ A production-ready, full-stack TypeScript monorepo starter template designed for
 - **Validation**: TypeBox (JSON Schema)
 - **API Documentation**: Swagger/OpenAPI 3.0
 - **CORS**: @fastify/cors
+- **Logging**: Pino with pino-pretty (colorized, emoji-enhanced)
 
 ### Database
 - **Database**: PostgreSQL 18 (Alpine)
