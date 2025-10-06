@@ -16,10 +16,10 @@ import {
 } from '@repo/database';
 
 const peopleRoutes: FastifyPluginAsync = async (fastify) => {
-  // GET /people - List all people with pagination
+  // GET /people - List all people with pagination and search
   fastify.get<{ Querystring: ListPeopleQueryDTO }>('/people', {
     schema: {
-      description: 'Get a list of all people with pagination',
+      description: 'Get a list of all people with pagination and optional search',
       tags: ['people'],
       querystring: ListPeopleQuerySchema,
       response: {
@@ -27,9 +27,9 @@ const peopleRoutes: FastifyPluginAsync = async (fastify) => {
       },
     },
     handler: async (request, reply) => {
-      const { limit = 10, offset = 0 } = request.query;
+      const { limit = 10, offset = 0, search } = request.query;
 
-      const { data, total } = await peopleDAO.findAll({ limit, offset });
+      const { data, total } = await peopleDAO.findAll({ limit, offset, search });
 
       return {
         data,

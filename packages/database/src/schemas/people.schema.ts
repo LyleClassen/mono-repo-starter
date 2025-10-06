@@ -30,6 +30,7 @@ export const UpdatePersonSchema = Type.Partial(CreatePersonSchema);
 export const ListPeopleQuerySchema = Type.Object({
   limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 100, default: 10 })),
   offset: Type.Optional(Type.Integer({ minimum: 0, default: 0 })),
+  search: Type.Optional(Type.String({ minLength: 1, maxLength: 100 })),
 });
 
 // Path parameters

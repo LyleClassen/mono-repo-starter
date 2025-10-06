@@ -1,21 +1,41 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, or, ilike } from 'drizzle-orm';
 import { db } from '../client.js';
 import { people, type Person, type NewPerson } from '../schema/index.js';
 
 export class PeopleDAO {
   /**
-   * Get all people with pagination
+   * Get all people with pagination and optional search
    */
-  async findAll(options?: { limit?: number; offset?: number }): Promise<{
+  async findAll(options?: { limit?: number; offset?: number; search?: string }): Promise<{
     data: Person[];
     total: number;
   }> {
     const limit = options?.limit ?? 10;
     const offset = options?.offset ?? 0;
+    const search = options?.search;
+
+    // Build where clause for search
+    const searchCondition = search
+      ? or(
+          ilike(people.firstName, `%${search}%`),
+          ilike(people.lastName, `%${search}%`),
+          ilike(people.email, `%${search}%`),
+          ilike(people.city, `%${search}%`),
+          ilike(people.country, `%${search}%`)
+        )
+      : undefined;
 
     const [peopleList, totalResult] = await Promise.all([
-      db.select().from(people).limit(limit).offset(offset),
-      db.select({ count: sql<number>`cast(count(*) as integer)` }).from(people),
+      db
+        .select()
+        .from(people)
+        .where(searchCondition)
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ count: sql<number>`cast(count(*) as integer)` })
+        .from(people)
+        .where(searchCondition),
     ]);
 
     return {

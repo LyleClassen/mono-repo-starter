@@ -1,10 +1,17 @@
 import Fastify from 'fastify';
+import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
 import { registerRoutes } from './routes/index.js';
 
 const fastify = Fastify({
   logger: true,
+});
+
+// Register CORS
+await fastify.register(cors, {
+  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'],
+  credentials: true,
 });
 
 // Register Swagger
