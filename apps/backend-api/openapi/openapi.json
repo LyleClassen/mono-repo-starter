@@ -51,7 +51,7 @@
         "tags": [
           "people"
         ],
-        "description": "Get a list of all people with pagination",
+        "description": "Get a list of all people with pagination and optional search",
         "parameters": [
           {
             "schema": {
@@ -72,6 +72,16 @@
             },
             "in": "query",
             "name": "offset",
+            "required": false
+          },
+          {
+            "schema": {
+              "minLength": 1,
+              "maxLength": 100,
+              "type": "string"
+            },
+            "in": "query",
+            "name": "search",
             "required": false
           }
         ],
@@ -604,6 +614,10 @@
     {
       "name": "health",
       "description": "Health check endpoints"
+    },
+    {
+      "name": "people",
+      "description": "People CRUD operations"
     }
   ]
 }

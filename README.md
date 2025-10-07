@@ -507,21 +507,25 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 
 ## API Documentation
 
-### Swagger/OpenAPI Integration
+### OpenAPI with Scalar
 
-API documentation is auto-generated from route schemas and available at:
+API documentation is auto-generated from route schemas and served as a static Scalar site at:
 - Development: http://localhost:3001/docs
 - Production: https://your-api.com/docs
 
-### Generating OpenAPI Spec
+### Generating OpenAPI Spec and Documentation
 
 ```bash
 cd apps/backend-api
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_db pnpm generate:openapi
 ```
 
-This creates `apps/backend-api/openapi/openapi.json` which is used by:
-- Swagger UI for interactive documentation
+This generates:
+- `apps/backend-api/openapi/openapi.json` - OpenAPI specification
+- `apps/backend-api/openapi/index.html` - Scalar static documentation
+
+The OpenAPI spec is used by:
+- Scalar for interactive API documentation with "try it out" functionality
 - `openapi-typescript` to generate TypeScript types for frontend
 
 ### Documenting Routes
@@ -923,14 +927,16 @@ WEB_CLIENT_PORT=3000
 
 ### OpenAPI Documentation Requirements
 
-**Swagger UI**:
+**Scalar Documentation**:
 - MUST be available at `/docs` endpoint
 - MUST include all routes with descriptions
-- MUST show request/response schemas
+- MUST show request/response schemas with "try it out" functionality
 - MUST organize by tags
+- Static HTML generated from OpenAPI spec
 
 **OpenAPI Spec**:
 - Generated in `apps/backend-api/openapi/openapi.json`
+- Used by Scalar for interactive documentation
 - Used by frontend for type generation
 - Version: OpenAPI 3.0.0
 

@@ -1,6 +1,5 @@
 import Fastify from 'fastify';
 import swagger from '@fastify/swagger';
-import swaggerUI from '@fastify/swagger-ui';
 import { registerRoutes } from '../src/routes/index.js';
 import { writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
@@ -30,6 +29,7 @@ async function generateOpenAPISpec() {
       ],
       tags: [
         { name: 'health', description: 'Health check endpoints' },
+        { name: 'people', description: 'People CRUD operations' },
       ],
     },
   });
@@ -47,11 +47,28 @@ async function generateOpenAPISpec() {
   const outputDir = join(__dirname, '..', 'openapi');
   await mkdir(outputDir, { recursive: true });
 
-  // Write the spec to a file
-  const outputPath = join(outputDir, 'openapi.json');
-  await writeFile(outputPath, JSON.stringify(spec, null, 2));
+  // Write the OpenAPI spec JSON
+  const jsonOutputPath = join(outputDir, 'openapi.json');
+  await writeFile(jsonOutputPath, JSON.stringify(spec, null, 2));
+  console.log(`✅ OpenAPI spec generated at: ${jsonOutputPath}`);
 
-  console.log(`✅ OpenAPI spec generated at: ${outputPath}`);
+  // Generate Scalar HTML
+  const scalarHTML = `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Backend API Documentation</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <script id="api-reference" data-url="./openapi.json"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+  </body>
+</html>`;
+
+  const htmlOutputPath = join(outputDir, 'index.html');
+  await writeFile(htmlOutputPath, scalarHTML);
+  console.log(`✅ Scalar HTML generated at: ${htmlOutputPath}`);
 
   await fastify.close();
   process.exit(0);

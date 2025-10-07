@@ -1,9 +1,12 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import swagger from '@fastify/swagger';
-import swaggerUI from '@fastify/swagger-ui';
+import fastifyStatic from '@fastify/static';
 import { registerRoutes } from './routes/index.js';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const fastify = Fastify({
@@ -51,14 +54,11 @@ await fastify.register(swagger, {
   },
 });
 
-// Register Swagger UI
-await fastify.register(swaggerUI, {
-  routePrefix: '/docs',
-  uiConfig: {
-    docExpansion: 'list',
-    deepLinking: false,
-  },
-  staticCSP: true,
+// Serve static Redoc documentation at /docs
+await fastify.register(fastifyStatic, {
+  root: join(__dirname, '..', 'openapi'),
+  prefix: '/docs',
+  decorateReply: false,
 });
 
 // Add logging hooks for better visibility
@@ -86,6 +86,11 @@ fastify.addHook('onResponse', async (request, reply) => {
   request.log.info(`${emoji} ${statusCode} (${responseTime}ms)`);
 });
 
+// Redirect /docs to /docs/ for proper index.html serving
+fastify.get('/docs', async (request, reply) => {
+  return reply.redirect('/docs/');
+});
+
 // Register all routes
 await registerRoutes(fastify);
 
@@ -98,7 +103,7 @@ const start = async () => {
     // Pretty startup messages
     console.log('\n🚀 Server started successfully!\n');
     console.log(`   ✨ API Server:    http://localhost:${port}`);
-    console.log(`   📚 Swagger Docs:  http://localhost:${port}/docs`);
+    console.log(`   📚 API Docs:      http://localhost:${port}/docs`);
     console.log(`   🔧 Environment:   ${process.env.NODE_ENV || 'development'}`);
     console.log(`   🕐 Started at:    ${new Date().toLocaleString()}\n`);
   } catch (err) {

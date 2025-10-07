@@ -140,7 +140,7 @@ export type NewUser = typeof users.$inferInsert;
 #### TypeBox Schemas (API Validation)
 - Location: `packages/database/src/schemas/*.schema.ts`
 - Purpose: Define API request/response validation and OpenAPI docs
-- Used for: Runtime validation, Swagger UI, frontend type generation
+- Used for: Runtime validation, Scalar documentation, frontend type generation
 
 ```typescript
 // packages/database/src/schemas/users.schema.ts
@@ -556,7 +556,8 @@ export function UserList() {
 - **Fastify 5**: Fast, low-overhead web framework
 - **TypeBox**: JSON Schema validation and type generation
 - **@fastify/swagger**: OpenAPI spec generation
-- **@fastify/swagger-ui**: Interactive API docs
+- **@fastify/static**: Serve static Scalar documentation
+- **Scalar**: Modern, interactive API documentation with "try it out"
 - **@fastify/cors**: CORS middleware
 - **Pino**: Fast JSON logger with pino-pretty for dev
 
@@ -929,7 +930,7 @@ export async function registerRoutes(fastify: FastifyInstance) {
 }
 ```
 
-#### Step 12: Update Swagger Tags
+#### Step 12: Update OpenAPI Tags
 
 ```typescript
 // apps/backend-api/src/index.ts
@@ -949,12 +950,14 @@ await fastify.register(swagger, {
 });
 ```
 
-#### Step 13: Regenerate OpenAPI Spec
+#### Step 13: Regenerate OpenAPI Spec and Scalar Documentation
 
 ```bash
 cd apps/backend-api
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_db pnpm generate:openapi
 ```
+
+This generates both `openapi.json` and the Scalar `index.html`.
 
 #### Step 14: Generate Frontend Types
 
