@@ -13,7 +13,7 @@ COPY package.json pnpm-lock.yaml* ./
 COPY apps/web-client/package.json ./apps/web-client/
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy app source
 COPY apps/web-client ./apps/web-client
