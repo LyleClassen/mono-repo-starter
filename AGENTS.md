@@ -934,6 +934,8 @@ export async function registerRoutes(fastify: FastifyInstance) {
 
 ```typescript
 // apps/backend-api/src/index.ts
+import swagger from '@fastify/swagger'; // OpenAPI plugin (not Swagger UI)
+
 await fastify.register(swagger, {
   openapi: {
     info: {

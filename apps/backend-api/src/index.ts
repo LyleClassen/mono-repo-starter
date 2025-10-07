@@ -32,7 +32,7 @@ await fastify.register(cors, {
   credentials: true,
 });
 
-// Register Swagger
+// Register OpenAPI plugin
 await fastify.register(swagger, {
   openapi: {
     openapi: '3.0.0',

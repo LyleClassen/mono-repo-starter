@@ -12,7 +12,7 @@ async function generateOpenAPISpec() {
     logger: false,
   });
 
-  // Register Swagger with same config as main app
+  // Register OpenAPI plugin with same config as main app
   await fastify.register(swagger, {
     openapi: {
       openapi: '3.0.0',

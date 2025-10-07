@@ -12,7 +12,7 @@ Fastify-based REST API with OpenAPI specification.
 ## API Documentation
 
 Once the server is running, visit:
-- **Swagger UI**: http://localhost:3001/docs
+- **API Docs**: http://localhost:3001/docs
 - **OpenAPI Spec**: Available at `/openapi/openapi.json`
 
 ## Using the OpenAPI Spec

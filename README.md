@@ -33,7 +33,7 @@ A production-ready, full-stack TypeScript monorepo starter template designed for
 ### Backend
 - **Framework**: Fastify 5
 - **Validation**: TypeBox (JSON Schema)
-- **API Documentation**: Swagger/OpenAPI 3.0
+- **API Documentation**: Scalar with OpenAPI 3.0
 - **CORS**: @fastify/cors
 - **Logging**: Pino with pino-pretty (colorized, emoji-enhanced)
 
@@ -1073,7 +1073,7 @@ Before finalizing a constitution, verify:
 - [Fastify Documentation](https://www.fastify.io/)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [TypeBox Documentation](https://github.com/sinclairzx81/typebox)
-- [OpenAPI Specification](https://swagger.io/specification/)
+- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
 - [pnpm Workspace](https://pnpm.io/workspaces)
 
 ## License
